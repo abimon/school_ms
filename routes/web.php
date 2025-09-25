@@ -8,8 +8,8 @@ use App\Http\Controllers\SupportTeam\StudentRecordController;
 Auth::routes();
 
 //Route::get('/test', 'TestController@index')->name('test');
-Route::get('/privacy-policy', 'privacy_policy')->name('privacy_policy');
-Route::get('/terms-of-use', 'terms_of_use')->name('terms_of_use');
+// Route::get('/privacy-policy', 'privacy_policy')->name('privacy_policy');
+// Route::get('/terms-of-use', 'terms_of_use')->name('terms_of_use');
 
 
 Route::group(['middleware' => 'auth'], function () {
