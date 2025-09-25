@@ -1,50 +1,41 @@
 <?php
 
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\MyAccountController;
-use App\Http\Controllers\SupportTeam\PromotionController;
-use App\Http\Controllers\SupportTeam\StudentRecordController;
-
 Auth::routes();
 
 //Route::get('/test', 'TestController@index')->name('test');
-// Route::get('/privacy-policy', 'privacy_policy')->name('privacy_policy');
-// Route::get('/terms-of-use', 'terms_of_use')->name('terms_of_use');
+Route::get('/privacy-policy', 'HomeController@privacy_policy')->name('privacy_policy');
+Route::get('/terms-of-use', 'HomeController@terms_of_use')->name('terms_of_use');
 
 
 Route::group(['middleware' => 'auth'], function () {
 
-   Route::controller(HomeController::class)->group(function () {
-        Route::get('/', 'dashboard')->name('home');
-        Route::get('/home', 'dashboard')->name('home');
-        Route::get('/dashboard', 'dashboard')->name('dashboard');
-   });
+    Route::get('/', 'HomeController@dashboard')->name('home');
+    Route::get('/home', 'HomeController@dashboard')->name('home');
+    Route::get('/dashboard', 'HomeController@dashboard')->name('dashboard');
 
-Route::controller(MyAccountController::class)->prefix('my_account')->group(function () {
-    Route::get('/', 'edit_profile')->name('my_account');
-    Route::put('/', 'update_profile')->name('my_account.update');
-    Route::put('/change_password', 'change_pass')->name('my_account.change_pass');
-});
+    Route::group(['prefix' => 'my_account'], function() {
+        Route::get('/', 'MyAccountController@edit_profile')->name('my_account');
+        Route::put('/', 'MyAccountController@update_profile')->name('my_account.update');
+        Route::put('/change_password', 'MyAccountController@change_pass')->name('my_account.change_pass');
+    });
+
     /*************** Support Team *****************/
     Route::group(['namespace' => 'SupportTeam',], function(){
 
         /*************** Students *****************/
         Route::group(['prefix' => 'students'], function(){
-            Route::controller(StudentRecordController::class)->group(function () {
-                Route::get('reset_pass/{st_id}', 'reset_pass')->name('st.reset_pass');
-                Route::get('graduated', 'graduated')->name('students.graduated');
-                Route::put('not_graduated/{id}', 'not_graduated')->name('st.not_graduated');
-                Route::get('list/{class_id}', 'listByClass')->name('students.list')->middleware('teamSAT');
-            });
+            Route::get('reset_pass/{st_id}', 'StudentRecordController@reset_pass')->name('st.reset_pass');
+            Route::get('graduated', 'StudentRecordController@graduated')->name('students.graduated');
+            Route::put('not_graduated/{id}', 'StudentRecordController@not_graduated')->name('st.not_graduated');
+            Route::get('list/{class_id}', 'StudentRecordController@listByClass')->name('students.list')->middleware('teamSAT');
+
             /* Promotions */
-            Route::controller(PromotionController::class)->group(function () {
-                Route::post('promote_selector', 'selector')->name('students.promote_selector');
-                Route::get('promotion/manage', 'manage')->name('students.promotion_manage');
-                Route::delete('promotion/reset/{pid}', 'reset')->name('students.promotion_reset');
-                Route::delete('promotion/reset_all', action: 'reset_all')->name('students.promotion_reset_all');
-                Route::get('promotion/{fc?}/{fs?}/{tc?}/{ts?}', 'promotion')->name('students.promotion');
-                Route::post('promote/{fc}/{fs}/{tc}/{ts}', 'promote')->name('students.promote');
-            });
+            Route::post('promote_selector', 'PromotionController@selector')->name('students.promote_selector');
+            Route::get('promotion/manage', 'PromotionController@manage')->name('students.promotion_manage');
+            Route::delete('promotion/reset/{pid}', 'PromotionController@reset')->name('students.promotion_reset');
+            Route::delete('promotion/reset_all', 'PromotionController@reset_all')->name('students.promotion_reset_all');
+            Route::get('promotion/{fc?}/{fs?}/{tc?}/{ts?}', 'PromotionController@promotion')->name('students.promotion');
+            Route::post('promote/{fc}/{fs}/{tc}/{ts}', 'PromotionController@promote')->name('students.promote');
 
         });
 
